@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>국가유산기본법령 모의고사</title>
+    <!-- 구글 폰트 추가 -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- 부트스트랩 CSS 추가 -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- 부트스트랩 JS 및 제이쿼리 추가 -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap');
+
+        * {
+            font-family: "Gowun Dodum", sans-serif;
+            color: black;
+        }
+
+        body {
+            background-color: #e0e0e0;
+            /* 전체 배경 명암 처리 */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding-top: 20px;
+        }
+
+        /* 전체 컨테이너 */
+        .container {
+            width: 21cm;
+            /* 전체 시험지 크기 */
+            background-color: white;
+            /* 시험지 영역을 화이트로 */
+            margin: 0 auto;
+            /* 중앙 정렬 */
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* 페이지 하단의 이전/다음 버튼 */
+        .footer {
+            position: absolute;
+            bottom: -60px;
+            /* 문제지 박스 외곽 경계선 아래에 위치 */
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10px;
+            /* 버튼과 좌우 화면 끝 사이 간격 */
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            width: auto;
+            /* 버튼의 너비가 경계선을 넘지 않게 자동으로 조정 */
+        }
+
+        /* 헤드 영역 */
+        .header {
+            width: 100%;
+            max-width: 21cm;
+            /* 18cm로 고정된 시험지 폭 */
+            height: 50px;
+            border: 2px solid black;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 13px;
+            /* 상단 패딩 */
+
+            box-sizing: border-box;
+            background-color: rgba(220, 220, 220, 0.5);
+            /* 약한 회색 배경 */
+            line-height: 50px;
+        }
+
+        .left-header {
+            padding-left: 30px;
+            /* 좌측 텍스트를 안으로 넣음 */
+        }
+
+        .right-header {
+            padding-right: 30px;
+            /* 우측 텍스트를 안으로 넣음 */
+        }
+
+        /* 문제 영역의 좌우 배치 대신 위아래 배치 */
+        .problem-area {
+            width: 19cm;
+            border: none;
+            /* 외곽 경계선 제거 */
+            padding: 20px;
+            box-sizing: border-box;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            /* 세로 방향으로 배치 */
+            position: relative;
+        }
+
+        /* 문제 영역에 임시 배경 컬러 추가 */
+        .question {
+            margin-bottom: 3px !important;
+            /* 질문지와 질문지 사이 간격 줄이기 */
+            padding: 5px;
+            background-color: transparent;
+            /* 문제 내부는 흰색으로 강조 */
+
+            box-sizing: border-box;
+        }
+
+        /* 질문 텍스트 줄바꿈 설정 */
+        .question p {
+            margin: 8px;
+            /* 질문지와 답지 사이 간격 줄이기 */
+            text-indent: -1em;
+            /* 질문 번호 바로 아래에서 시작되지 않도록 */
+            padding-left: 0.5em;
+            /* 첫 줄 이후 줄 시작을 동일하게 맞춤 */
+        }
+
+        .choices {
+            margin-top: 0px !important;
+            /* 질문지와 답지 사이 간격을 줄이기 */
+        }
+
+        /* 선택지 텍스트 줄바꿈 설정 */
+        .choices .choice {
+            text-indent: -1.5em;
+            /* 선택지 번호 바로 아래에서 줄이 시작되지 않도록 */
+            padding-left: 2em;
+            /* 첫 줄 이후 줄 시작을 동일하게 맞춤 */
+            margin-bottom: 5px;
+        }
+
+        /* 선택지 버튼 활성화 */
+        .choice-button {
+            width: 30px;
+            /* 선택지 버튼의 넓이 */
+            height: 30px;
+            /* 선택지 버튼의 높이 */
+            line-height: 30px;
+            /* 텍스트를 중앙에 배치 */
+            text-align: center;
+            /* 텍스트 중앙 정렬 */
+            border-radius: 50%;
+            /* 둥근 버튼 */
+            padding: 0;
+            /* 추가 여백 없음 */
+            margin-right: 5px;
+            /* 선택지 텍스트와의 간격 */
+            cursor: pointer;
+            box-sizing: border-box;
+            /* 테두리와 내부 여백을 포함한 크기 정의 */
+        }
+
+        /* 버튼에 마우스를 올렸을 때 투명한 원형 실선 유지 */
+        .choice-button:hover {
+            border-color: transparent;
+            /* 여전히 투명 */
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 13cm;
+            /* 가로 13cm */
+            height: 7cm;
+            /* 세로 7cm */
+            border-radius: 10px;
+            /* 각 모서리 레디우스 10px */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            /* 상단 약한 명암 처리 */
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            /* 좌우 정렬 */
+            align-items: center;
+            /* 내용 수직 중앙 정렬 */
+            font-size: 20px;
+            /* 상단 폰트 크기 */
+            font-weight: bold;
+            padding-bottom: 10px;
+            border-bottom: 1px solid lightgray;
+            /* 상단 구분선 */
+            height: 40px;
+            /* 상단의 높이 고정 */
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            /* 확인 버튼 우측 정렬 */
+            border-top: none;
+            /* 보이지 않게 투명 처리 */
+        }
+
+        .modal-body {
+            padding: 6px;
+            font-size: 16px;
+            /* 텍스트 폰트 크기 */
+            line-height: 1.5;
+            /* 줄 간격 설정 */
+        }
+
+        button.confirm-button {
+            width: 50px;
+            /* 버튼의 너비 */
+            height: 30px;
+            /* 버튼의 높이 */
+            padding: 3px 3px;
+            /* 내부 여백 조정 */
+            margin: 0;
+            /* 외부 여백 제거 */
+            line-height: normal;
+            /* 텍스트가 중앙에 위치하도록 */
+            border-radius: 10px;
+            /* 모서리 둥글게 */
+            background-color: rgb(161, 160, 160);
+            /* 버튼 배경색 (녹색) */
+            color: white;
+            /* 버튼 글씨색 */
+            font-size: 16px;
+            /* 폰트 크기 */
+            border: none;
+            /* 테두리 제거 */
+            cursor: pointer;
+            /* 커서 모양 변경 */
+        }
+
+        button.confirm-button:hover {
+            background-color: #45a049;
+            /* 마우스 오버 시 버튼 색상 */
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* 이전페이지 버튼 */
+        button.previous-button {
+            float: left;
+            /* 우측 정렬 */
+            padding: 1px 4px;
+            font-size: 16px;
+            margin-top: 10px;
+            margin-left: 0;
+            /* 좌측 여백 없음 */
+            margin-bottom: 30px;
+            /* 아래 간격 설정 */
+        }
+
+        /* 다음페이지 버튼 */
+        button.next-button {
+            float: right;
+            /* 우측 정렬 */
+            padding: 1px 4px;
+            font-size: 16px;
+            margin-top: 10px;
+            margin-right: 0;
+            /* 우측 여백 없음 */
+            margin-bottom: 30px;
+            /* 아래 간격 설정 */
+        }
+    </style>
+    <script>
+        function openAnswerModal(isCorrect, modalId) {
+            // 정답 여부 설정
+            const answerText = document.getElementById(modalId).querySelector('#answerText');
+            answerText.textContent = isCorrect ? '정답입니다!' : '오답입니다.';
+
+            // 모달창 열기
+            document.getElementById(modalId).style.display = "block";
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = "none";
+        }
+
+        function goToPreviousPage() {
+            window.location.href = 'https://2024mo-test.github.io/mj-part/mj2.html'; // 이전 페이지의 URL
+        }
+
+        function goToNextPage() {
+            window.location.href = 'https://2024mo-test.github.io/mj-part/mj4.html'; // 다음 페이지의 URL
+        }
+    </script>
+
+</head>
+
+<body>
+
+    <!-- 전체 컨테이너 -->
+    <div class="container">
+        <!-- 헤드 영역 -->
+        <div class="header">
+            <div class="left-header">
+                <h1 style="font-size: 23px; font-weight: 550; line-height: normal;">매장유산법령 모의고사 </h1> <!-- 수동 입력 -->
+            </div>
+            <div class="right-header">
+                <h3 style="font-size: 19px; line-height: normal;">2024년 제1회</h3> <!-- 수동 입력 -->
+            </div>
+        </div>
+        <!-- 문제 영역 -->
+        <div class="problem-area">
+            <!-- 좌측 문제 칸 -->
+            <div class="left-column">
+                <!-- 문제 영역 -->
+                <div class="question">
+                    <p>11. 매장유산법령상 매장유산 유존지역에서 개발사업을 하려는 경우 미리 국가유산청장과 협의를 하여야 할 사업에 해당하지 않는 것은?</p>
+                    <div class="choices">
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal11')">①</span> 흙쌓기
+                            또는 지하 땅파기를 수반하는 등 토지의 형질을 변경하는 사업
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(true, 'answerModal11')">②</span> 매장유산
+                            유존지역의 보존에 중대한 영향을 미칠 우려가 있는 사업
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal11')">③</span>
+                            「연안관리법」에 따른 연안에서 골재 채취를 수반하는 사업
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal11')">④</span> 수몰을
+                            수반하는 사업
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 영역이 끝나는 부분 아래에 배치 -->
+                <div id="answerModal11" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span id="answerText">정답입니다!</span> <!-- 좌측 정답 여부 표시 -->
+                            <button class="confirm-button" onclick="closeModal('answerModal11')">확인</button>
+                            <!-- 우측 끝 확인 버튼 -->
+                        </div>
+                        <!-- 하단 텍스트 영역을 아래에 배치 -->
+                        <div class="modal-body">
+                            <p id="lawText">법조문 ; 매장유산 보호 및 조사에 관한 법률 시행령 제6조 제1항 <br> ① 법 제8조제1항에서 “대통령령으로 정하는 개발사업”이란
+                                다음 각 호의 어느 하나의 개발사업을 말한다. </p> <!-- 법조문 표시 -->
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 영역 -->
+                <div class="question">
+                    <p>12. 매장유산법령상 국가유산청장이 국가유산 보존을 위하여 해당 건설공사의 시행자에게 명할 수 있는 국가유산 보존 조치에 해당하지 않는 것은?
+                    </p>
+                    <div class="choices">
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal12')">①</span> 현상보존
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal12' )">②</span> 건설공사
+                            시 매장유산 관련 전문가의 참관조사
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal12')">③</span> 매장유산
+                            발굴조사[정밀발굴조사, 시굴(試掘)조사, 표본조사]
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(true, 'answerModal12')">④</span> 매장유산
+                            발견 시 박물관 등으로 이전, 보존조치
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 영역이 끝나는 부분 아래에 배치 -->
+                <div id="answerModal12" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span id="answerText">정답입니다!</span> <!-- 좌측 정답 여부 표시 -->
+                            <button class="confirm-button" onclick="closeModal('answerModal12')">확인</button>
+                            <!-- 우측 끝 확인 버튼 -->
+                        </div>
+                        <!-- 하단 텍스트 영역을 아래에 배치 -->
+                        <div class="modal-body">
+                            <p id="lawText">법조문 ; 매장유산 보호 및 조사에 관한 법률 시행령 제7조 제1항 <br> ① 국가유산청장은 국가유산 보존을 위하여 법 제9조제1항에
+                                따라 해당 건설공사의 시행자에게 다음 각 호의 국가유산 보존 조치를 명할 수 있다. </p>
+                            <!-- 법조문 표시 -->
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 영역 -->
+                <div class="question">
+                    <p>13. 매장유산법령상 지표조사에 따른 국가유산 보존 조치의 내용에 관한 설명으로 옳지 않는 것은? </p>
+                    <div class="choices">
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal13')">①</span> 현상보존은
+                            국가유산의 전부 또는 일부를 현지에 현재 상태대로 보존하는 것을 말한다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal13' )">②</span> 건설공사
+                            시 매장유산 관련 전문가의 참관조사는 해당 전문가가 건설공사의 시작 시점부터 그 현장에 참관하여 매장유산의 출토 여부를 직접 확인하는 것을 말한다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(true, 'answerModal13')">③</span>
+                            시굴(試掘)조사는 건설공사 사업 면적 중 매장유산 유존지역 면적의 30퍼센트 이하의 범위에서 폭 1미터, 깊이 50센치의 트렌치 형식으로 시굴하여 조사하는 것을
+                            말한다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal13')">④</span> 표본조사는
+                            건설공사 사업 면적 중 매장유산 유존지역 면적의 2퍼센트 이하의 범위에서 발굴허가를 받지 않고 매장유산의 종류 및 분포 등을 표본적으로 조사하는 것을 말한다.
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 영역이 끝나는 부분 아래에 배치 -->
+                <div id="answerModal13" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span id="answerText">정답입니다!</span> <!-- 좌측 정답 여부 표시 -->
+                            <button class="confirm-button" onclick="closeModal('answerModal13')">확인</button>
+                            <!-- 우측 끝 확인 버튼 -->
+                        </div>
+                        <!-- 하단 텍스트 영역을 아래에 배치 -->
+                        <div class="modal-body">
+                            <p id="lawText">법조문 ; 매장유산 보호 및 조사에 관한 법률 시행규칙 제5조 제1항 제4호 나목 <br> 나. 시굴(試掘)조사: 건설공사 사업 면적 중
+                                매장유산 유존지역 면적의 10퍼센트 이하의 범위에서 매장유산을 발굴하여 조사하는 것
+                            </p> <!-- 법조문 표시 -->
+                        </div>
+                    </div>
+                </div>
+                <!-- 2번 문제 영역 -->
+                <div class="question">
+                    <p>14. 매장유산법령상 매장유산의 발굴허가 등에 관한 설명으로 옳지 않는 것은?
+                    </p>
+                    <div class="choices">
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal14')">①</span>
+                            유적(遺蹟)의 정비사업을 목적으로 발굴하는 경우 국가유산청장의 허가를 받은 때에는 발굴할 수 있다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(true, 'answerModal14' )">②</span> 발굴기간이
+                            300일 이상인 경우에는 문화유산위원회 또는 자연유산위원회의 심의를 반드시 거쳐야 한다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal14')">③</span>
+                            국가유산청장은 학술적으로 중요한 유물ㆍ유구가 출토되는 경우 기간을 명시하여 발굴의 정지나 중지를 명할 수 있다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal14')">④</span>
+                            국가유산청장은 발굴허가를 받은 건설공사의 시행자가 그 허가 내용 및 발굴 시 준수하도록 한 사항 등 지시사항을 위반한 경우 그 허가를 취소할 수 있다.
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 영역이 끝나는 부분 아래에 배치 -->
+                <div id="answerModal14" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span id="answerText">정답입니다!</span> <!-- 좌측 정답 여부 표시 -->
+                            <button class="confirm-button" onclick="closeModal('answerModal14')">확인</button>
+                            <!-- 우측 끝 확인 버튼 -->
+                        </div>
+                        <!-- 하단 텍스트 영역을 아래에 배치 -->
+                        <div class="modal-body">
+                            <p id="lawText">법조문 ; 매장유산 보호 및 조사에 관한 법률 시행령 제8조 제1항 제3호 <br> ① 국가유산청장은 법 제11조제1항 각 호에 따른
+                                사업으로서 다음 각 호의 어느 하나에 해당하는 사업에 대해서는 문화유산위원회 또는 자연유산위원회의 심의를 거친 후에 발굴허가 여부를 결정하여야 한다.
+                                3. 발굴기간이 200일 이상인 사업
+                            </p> <!-- 법조문 표시 -->
+                        </div>
+                    </div>
+                </div>
+                <!-- 2번 문제 영역 -->
+                <div class="question">
+                    <p>15. 매장유산법령상 국가에 의한 매장유산 발굴에 관한 설명으로 옳지 않는 것은?
+                    </p>
+                    <div class="choices">
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal15')">①</span>
+                            국가유산청장은 학술조사 또는 공공목적 등에 필요한 경우 폐사지(廢寺址) 등 역사적 가치가 높은 매장유산 유존지역을 발굴할 수 있다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal15' )">②</span>
+                            국가유산청장은 매장유산 유존지역을 발굴할 경우 해당 지역의 소유자, 관리자 또는 점유자에게 발굴의 목적, 방법 및 착수 시기 등을 발굴 착수일 2주일 전까지 미리
+                            알려 주어야 한다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(true, 'answerModal15')">③</span> 매장유산
+                            유존지역을 발굴할 경우 해당 지역의 소유자 등은 발굴 현장에 발굴의 내용을 알리는 안내판을 설치하여야 한다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal15')">④</span> 국가는
+                            매장유산 유존지역의 발굴로 손실을 받은 자에게 그 손실을 보상하여야 한다.
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 영역이 끝나는 부분 아래에 배치 -->
+                <div id="answerModal15" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span id="answerText">정답입니다!</span> <!-- 좌측 정답 여부 표시 -->
+                            <button class="confirm-button" onclick="closeModal('answerModal15')">확인</button>
+                            <!-- 우측 끝 확인 버튼 -->
+                        </div>
+                        <!-- 하단 텍스트 영역을 아래에 배치 -->
+                        <div class="modal-body">
+                            <p id="lawText">법조문 ; 매장유산 보호 및 조사에 관한 법률 시행령 제12조 제4항 <br> ④ 국가유산청장은 법 제13조제1항 및 제2항에 따른 발굴
+                                현장에 발굴의 목적, 조사기관, 소요기간 등의 내용을 알리는 안내판을 설치하여야 한다.
+                            </p> <!-- 법조문 표시 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 시험지 외곽 경계선 바깥의 버튼 영역 -->
+        <div class="navigation">
+            <button class="previous-button" onclick="goToPreviousPage()">이전페이지</button>
+            <button class="next-button" onclick="goToNextPage()">다음페이지</button>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
